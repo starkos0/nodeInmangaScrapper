@@ -14,10 +14,41 @@
 
   <body>
     <div id="app">
-      <p class="text-5xl font-bold">hola</p>
-      <button class="btn btn-neutral">Neutral</button>
+      <form id="dynamicForm">
+        <label class="form-control w-full max-w-xs">
+          <div class="label">
+            <span class="label-text">Url capítulo 1 página 1</span>
+          </div>
+          <input type="text" placeholder="Type here" class="input input-bordered input-sm w-full max-w-xs" id="urlBase" name="urlBase"/>
+        </label>
+        <label class="form-control w-full max-w-xs">
+          <div class="label">
+            <span class="label-text">Ubicación de la carpeta</span>
+          </div>
+          <input type="text" placeholder="Type here" class="input input-bordered input-sm w-full max-w-xs" id="ubicacionCarpeta" name="ubicacionCarpeta"/>
+        </label>
+
+        <div class="card bg-base-100 w-96 shadow-xl">
+          <div class="card-body">
+            <h2 class="card-title">Selección de capítulos</h2>
+            <blockquote>Nota: Para seleccionar un rango de capítulos, sigue este formato: 01-32</blockquote>
+            <blockquote>Para seleccionar capítulos sueltos, sigue este formato: 01,20,32,34</blockquote>
+            <blockquote>Para descargar todos los capítulos, no escribas nada y deja marcado el check de abajo.</blockquote>
+            <input type="text" placeholder="Type here" class="input input-bordered input-sm w-full max-w-xs" id="seleccionCapitulos" name="seleccionCapitulos"/>
+            <div class="form-control">
+              <label class="label cursor-pointer justify-start">
+                <span class="label-text">Descargar todos los capítulos</span>
+                <input type="checkbox" checked="checked" class="checkbox" id="descargarTodos" name="descargarTodos"/>
+              </label>
+            </div>
+          </div>
+        </div>
+        <button class="btn" type="submit">Descargar capítulos</button>
+      </form>
     </div>
-    
+    <div id="errorHandling" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 ">
+
+    </div>
     <script type="module" src="./src/renderer.ts"></script>
   </body>
 </html>
