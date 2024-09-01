@@ -6,8 +6,8 @@ import icon from '../../resources/icon.png?asset'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1280,
+    height: 720,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -16,7 +16,7 @@ function createWindow(): void {
       sandbox: false
     }
   })
-
+  mainWindow.webContents.openDevTools();
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -70,5 +70,15 @@ app.on('window-all-closed', () => {
   }
 })
 
+ipcMain.on('submit-form', (event, formData) => {
+  console.log('Datos recibidos desde el renderer:', formData);
+
+  // Aquí puedes manejar los datos, realizar operaciones de negocio, etc.
+  // Supongamos que la operación es exitosa:
+  event.sender.send('form-submission-success', { message: 'Form submitted successfully' });
+
+  // Si hay un error, puedes enviar un mensaje de error:
+  // event.sender.send('form-submission-error', { message: 'Error submitting form' });
+});
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

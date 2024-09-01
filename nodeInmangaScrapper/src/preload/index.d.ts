@@ -3,6 +3,11 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 declare global {
   interface Window {
     electron: ElectronAPI
-    api: unknown
+    api: unknown,
+    controlesForm: {
+      submitForm: (formData: datosFormulario) => void;
+      onFormSuccess: (callback: (response: any) => void) => void;
+      onFormError: (callback: (error: string) => void) => void;
+    };
   }
 }
