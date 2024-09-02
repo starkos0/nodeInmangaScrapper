@@ -41,7 +41,6 @@ function validarForm(event: Event) {
   const descargarTodos = document.getElementById("descargarTodos") as HTMLInputElement;
   const seleccionCapitulos = document.getElementById("seleccionCapitulos") as HTMLInputElement;
 
-  // Validar URL
   if (!urlBase.value.includes("https://inmanga.com/ver/manga/")) {
     esValido = false;
     mostrarAlerta("La url no pertenece a la página de manga seleccionada.");
@@ -86,17 +85,18 @@ function validarForm(event: Event) {
     window.controlesForm.submitForm(datos);
 
     // Manejar respuesta de éxito
-    window.controlesForm.onFormSuccess((response) => {
-      console.log('Form submission successful:', response);
-    });
-
-    // Manejar errores
-    window.controlesForm.onFormError((error) => {
-      console.error('Form submission error:', error);
-    });
   }
 }
 
+window.controlesForm.onFormSuccess((response) => {
+  console.log('Form submission successful:', response);
+});
+
+// Manejar errores
+window.controlesForm.onFormError((error) => {
+  console.error('Form submission error:', error);
+  alert("fallo en la ruta")
+});
 
 
 init()
