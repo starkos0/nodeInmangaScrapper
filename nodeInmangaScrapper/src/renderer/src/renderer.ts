@@ -4,6 +4,17 @@ function init(): void {
   window.addEventListener('DOMContentLoaded', () => {
     doAThing()
     processForm()
+    var openModalButton = document.getElementById('crearPDF') as HTMLButtonElement;
+    var myModal = document.getElementById('my_modal_1') as HTMLDialogElement;
+    const infoDialogButton = document.getElementById("infoDialog") as HTMLButtonElement;
+    const infoDialog = document.getElementById("my_modal_2") as HTMLDialogElement;
+    // Añade el evento click al botón
+    openModalButton.addEventListener('click', function() {
+        myModal.showModal();
+    });
+    infoDialogButton.addEventListener('click', () =>{
+      infoDialog.showModal();
+    })
   })
 }
 

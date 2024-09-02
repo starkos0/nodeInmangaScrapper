@@ -14,24 +14,29 @@
 <body>
   <div id="app" class="flex flex-col justify-center items-center h-svh">
     <div class="">
-      <h1 class="font-bold text-3xl m-8">Descargar mangas formato PDF</h1>
+      <div class="m-4">
+        <h1 class="font-bold text-3xl m-4">Descargar mangas formato PDF</h1>
+        <p class="text-center font-bold">Primero, descarga los capítulos, después, genera los PDF.</p>
+      </div>
       <form id="dynamicForm">
         <div class="flex flex-col justify-center items-center">
           <label class="form-control w-full max-w-xs">
             <div class="label">
               <span class="label-text">Url capítulo 1 página 1</span>
             </div>
-            <input type="text" placeholder="Introduce una url..." class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="urlBase"
+            <input type="text" placeholder="Introduce una url..."
+              class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="urlBase"
               name="urlBase" />
           </label>
           <label class="form-control w-full max-w-xs">
             <div class="label">
               <span class="label-text">Ubicación de la carpeta</span>
             </div>
-            <input type="text" placeholder="Pega aquí una ruta..." class="input border border-base-content rounded-md input-sm w-full max-w-xs"
-              id="ubicacionCarpeta" name="ubicacionCarpeta" />
+            <input type="text" placeholder="Pega aquí una ruta..."
+              class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="ubicacionCarpeta"
+              name="ubicacionCarpeta" />
           </label>
-  
+
           <div class="card bg-base-100 w-96 shadow-xl border border-base-content rounded-md my-4">
             <div class="card-body">
               <h2 class="card-title">Selección de capítulos</h2>
@@ -39,8 +44,9 @@
               <blockquote>Para seleccionar capítulos sueltos, sigue este formato: 01,20,32,34</blockquote>
               <blockquote>Para descargar todos los capítulos, no escribas nada y deja marcado el check de abajo.
               </blockquote>
-              <input type="text" placeholder="Escribe aquí un rango..." class="input border border-base-content rounded-md input-sm w-full max-w-xs"
-                id="seleccionCapitulos" name="seleccionCapitulos" />
+              <input type="text" placeholder="Escribe aquí un rango..."
+                class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="seleccionCapitulos"
+                name="seleccionCapitulos" />
               <div class="form-control">
                 <label class="label cursor-pointer justify-start">
                   <span class="label-text mr-2">Descargar todos los capítulos</span>
@@ -50,17 +56,58 @@
             </div>
           </div>
         </div>
-        
+
       </form>
       <div class="flex justify-center items-center gap-2">
         <button class="btn" id="descargarCaps">Descargar capítulos</button>
-        <button class="btn">Crear PDF</button>
+        <button class="btn" id="crearPDF">Crear PDF</button>
       </div>
+      <!-- Open the modal using ID.showModal() method -->
+      <dialog id="my_modal_1" class="modal">
+        <div class="modal-box">
+          <h3 class="text-lg font-bold">Nota importante</h3>
+          <p class="py-4">Para que la generación del PDF funcione correctamente ten en cuenta lo siguiente:</p>
+          <p>Debes de seleccionar la ruta de la carpeta general (la que habías ingresado anteriormente para crear la
+            descarga) y asegurarte de que estén los capítulos completos, te recomiendo no cambiar los nombres de las
+            imagenes, para que el PDF esté correctamente estructurado.</p>
+          <input type="text" placeholder="Escribe aquí la ruta de la carpeta..."
+            class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="rutaPdfs"
+            name="rutaPdfs" />
+
+          <div class="modal-action">
+            <form method="dialog">
+              <!-- if there is a button in form, it will close the modal -->
+              <button class="btn">Cerrar</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   </div>
   <div id="errorHandling" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 ">
 
   </div>
+  <div class="absolute top-0 m-4" id="infoDialog">
+    <button class="btn btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    </button>
+  </div>
+  <dialog id="my_modal_2" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Información sobre bugs</h3>
+      <p class="py-4">Si encuentras algún bug, crea una nueva <i>issue</i> en este repositorio de GitHub</p>
+      <a href="https://github.com/starkos0/nodeInmangaScrapper" class="link link-primary">starkos0 - nodeInmangaScrapper</a>
+      <div class="modal-action">
+        <form method="dialog">
+          <!-- if there is a button in form, it will close the modal -->
+          <button class="btn">Cerrar</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
   <script type="module" src="./src/renderer.ts"></script>
 </body>
 
