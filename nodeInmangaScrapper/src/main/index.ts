@@ -12,8 +12,8 @@ var urlBase = 'https://pack-yak.intomanga.com/images/manga'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 700,
-    height: 700,
+    width: 800,
+    height: 900,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),

@@ -27,9 +27,9 @@ function replaceText(selector: string, text: string): void {
 }
 
 function processForm() {
-  const form = document.getElementById("dynamicForm") as HTMLFormElement;
-  console.log(form)
-  form.addEventListener("submit", validarForm)
+  const descargarCaps = document.getElementById("descargarCaps") as HTMLButtonElement;
+  descargarCaps.addEventListener("click", validarForm)
+  // form.addEventListener("submit", validarForm)
 }
 
 function validarForm(event: Event) {
@@ -43,7 +43,7 @@ function validarForm(event: Event) {
 
   if (!urlBase.value.includes("https://inmanga.com/ver/manga/")) {
     esValido = false;
-    mostrarAlerta("La url no pertenece a la página de manga seleccionada.");
+    mostrarAlerta("La url no pertenece a la página de manga seleccionada. De momento solo solo está disponible inmanga.");
   }
 
   // Validar ruta de carpeta
@@ -81,7 +81,7 @@ function validarForm(event: Event) {
       descargarTodos: descargarTodos.checked,
       seleccionCapitulos: seleccionCapitulos.value
     };
-    
+
     window.controlesForm.submitForm(datos);
 
     // Manejar respuesta de éxito
@@ -95,7 +95,7 @@ window.controlesForm.onFormSuccess((response) => {
 // Manejar errores
 window.controlesForm.onFormError((error) => {
   console.error('Form submission error:', error);
-  alert("fallo en la ruta")
+  mostrarAlerta("La ubicación introducida no es válida/no existe.")
 });
 
 
@@ -104,19 +104,19 @@ init()
 function mostrarAlerta(message: string): void {
   const alertDiv = document.createElement("div");
   alertDiv.setAttribute("role", "alert");
-  alertDiv.className = "alert";
+  alertDiv.className = "alert alert-error my-4";
   alertDiv.innerHTML = `
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      class="stroke-info h-6 w-6 shrink-0">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-    </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
     <span>${message}</span>
   `;
   const errorHandling = document.getElementById("errorHandling") as HTMLDivElement;
@@ -126,5 +126,5 @@ function mostrarAlerta(message: string): void {
     setTimeout(() => {
       alertDiv.remove();
     }, 500); // Tiempo para que se complete la animación de fade-out
-  }, 2000);
+  }, 2500);
 }

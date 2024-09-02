@@ -1,54 +1,67 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Electron</title>
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
-    />
 
-    <link href="./assets/main.css" type="text/css" rel="stylesheet" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <title>Electron</title>
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:" />
 
-  <body>
-    <div id="app">
+  <link href="./assets/main.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="app" class="flex flex-col justify-center items-center h-svh">
+    <div class="">
+      <h1 class="font-bold text-3xl m-8">Descargar mangas formato PDF</h1>
       <form id="dynamicForm">
-        <label class="form-control w-full max-w-xs">
-          <div class="label">
-            <span class="label-text">Url capítulo 1 página 1</span>
-          </div>
-          <input type="text" placeholder="Type here" class="input input-bordered input-sm w-full max-w-xs" id="urlBase" name="urlBase"/>
-        </label>
-        <label class="form-control w-full max-w-xs">
-          <div class="label">
-            <span class="label-text">Ubicación de la carpeta</span>
-          </div>
-          <input type="text" placeholder="Type here" class="input input-bordered input-sm w-full max-w-xs" id="ubicacionCarpeta" name="ubicacionCarpeta"/>
-        </label>
-
-        <div class="card bg-base-100 w-96 shadow-xl">
-          <div class="card-body">
-            <h2 class="card-title">Selección de capítulos</h2>
-            <blockquote>Nota: Para seleccionar un rango de capítulos, sigue este formato: 01-32</blockquote>
-            <blockquote>Para seleccionar capítulos sueltos, sigue este formato: 01,20,32,34</blockquote>
-            <blockquote>Para descargar todos los capítulos, no escribas nada y deja marcado el check de abajo.</blockquote>
-            <input type="text" placeholder="Type here" class="input input-bordered input-sm w-full max-w-xs" id="seleccionCapitulos" name="seleccionCapitulos"/>
-            <div class="form-control">
-              <label class="label cursor-pointer justify-start">
-                <span class="label-text">Descargar todos los capítulos</span>
-                <input type="checkbox" checked="checked" class="checkbox" id="descargarTodos" name="descargarTodos"/>
-              </label>
+        <div class="flex flex-col justify-center items-center">
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Url capítulo 1 página 1</span>
+            </div>
+            <input type="text" placeholder="Introduce una url..." class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="urlBase"
+              name="urlBase" />
+          </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Ubicación de la carpeta</span>
+            </div>
+            <input type="text" placeholder="Pega aquí una ruta..." class="input border border-base-content rounded-md input-sm w-full max-w-xs"
+              id="ubicacionCarpeta" name="ubicacionCarpeta" />
+          </label>
+  
+          <div class="card bg-base-100 w-96 shadow-xl border border-base-content rounded-md my-4">
+            <div class="card-body">
+              <h2 class="card-title">Selección de capítulos</h2>
+              <blockquote>Nota: Para seleccionar un rango de capítulos, sigue este formato: 01-32</blockquote>
+              <blockquote>Para seleccionar capítulos sueltos, sigue este formato: 01,20,32,34</blockquote>
+              <blockquote>Para descargar todos los capítulos, no escribas nada y deja marcado el check de abajo.
+              </blockquote>
+              <input type="text" placeholder="Escribe aquí un rango..." class="input border border-base-content rounded-md input-sm w-full max-w-xs"
+                id="seleccionCapitulos" name="seleccionCapitulos" />
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start">
+                  <span class="label-text mr-2">Descargar todos los capítulos</span>
+                  <input type="checkbox" checked="checked" class="checkbox" id="descargarTodos" name="descargarTodos" />
+                </label>
+              </div>
             </div>
           </div>
         </div>
-        <button class="btn" type="submit">Descargar capítulos</button>
+        
       </form>
+      <div class="flex justify-center items-center gap-2">
+        <button class="btn" id="descargarCaps">Descargar capítulos</button>
+        <button class="btn">Crear PDF</button>
+      </div>
     </div>
-    <div id="errorHandling" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 ">
+  </div>
+  <div id="errorHandling" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 ">
 
-    </div>
-    <script type="module" src="./src/renderer.ts"></script>
-  </body>
+  </div>
+  <script type="module" src="./src/renderer.ts"></script>
+</body>
+
 </html>
