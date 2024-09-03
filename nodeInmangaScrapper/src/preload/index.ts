@@ -18,6 +18,8 @@ if (process.contextIsolated) {
         ipcRenderer.on('form-submission-success', (event, response) => callback(response)),
       onFormError: (callback: (error: string) => void) =>
         ipcRenderer.on('form-submission-error', (event, error) => callback(error)),
+      onDownloadSuccess: (callback: (response: any) => void) =>
+        ipcRenderer.on('download-success',(event,response) => callback(response))
     })
   } catch (error) {
     console.error(error)

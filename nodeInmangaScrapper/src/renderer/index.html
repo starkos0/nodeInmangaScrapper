@@ -24,7 +24,9 @@
             <div class="label">
               <span class="label-text">Url capítulo 1 página 1</span>
             </div>
-            <input type="text" placeholder="Introduce una url..."
+            <input type="text"
+              value="https://inmanga.com/ver/manga/Jujutsu-Kaisen/268/96cbd7bf-eb1b-49e6-be4a-572a9fa5ce00"
+              placeholder="Introduce una url..."
               class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="urlBase"
               name="urlBase" />
           </label>
@@ -32,7 +34,7 @@
             <div class="label">
               <span class="label-text">Ubicación de la carpeta</span>
             </div>
-            <input type="text" placeholder="Pega aquí una ruta..."
+            <input type="text" value="E:/pruebasDescargas2" placeholder="Pega aquí una ruta..."
               class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="ubicacionCarpeta"
               name="ubicacionCarpeta" />
           </label>
@@ -99,7 +101,11 @@
     <div class="modal-box">
       <h3 class="text-lg font-bold">Información sobre bugs</h3>
       <p class="py-4">Si encuentras algún bug, crea una nueva <i>issue</i> en este repositorio de GitHub</p>
-      <a href="https://github.com/starkos0/nodeInmangaScrapper" class="link link-primary">starkos0 - nodeInmangaScrapper</a>
+      <a href="https://github.com/starkos0/nodeInmangaScrapper"
+        class="link link-primary">https://github.com/starkos0/nodeInmangaScrapper</a>
+      <p>Si quieres que se implementen más páginas de mangas, dale una estrella al repositorio de arriba.</p>
+      <p>Ten en cuenta que si descargas muchos capítulos de golpe, <strong>tardará un rato en terminar.</strong></p>
+      <p>Creado por: starkos</p>
       <div class="modal-action">
         <form method="dialog">
           <!-- if there is a button in form, it will close the modal -->
@@ -108,6 +114,10 @@
       </div>
     </div>
   </dialog>
+  <div id="loader" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-base-200 p-4 rounded-md flex justify-center items-center gap-4 hidden">
+    <span>Descargando capítulos...</span>
+    <span class="loading loading-spinner loading-md"></span>
+  </div>
   <script type="module" src="./src/renderer.ts"></script>
 </body>
 

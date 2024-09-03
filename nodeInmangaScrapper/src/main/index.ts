@@ -8,7 +8,8 @@ import fs from 'fs';
 import sharp from 'sharp';
 import { datosFormulario } from '../interfaces/datosFormulario';
 
-var urlBase = 'https://pack-yak.intomanga.com/images/manga'
+var urlBase = 'https://pack-yak.intomanga.com/images/manga';
+var selectedManga = "";
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -79,13 +80,14 @@ app.on('window-all-closed', () => {
 ipcMain.on('submit-form', async (event, formData: datosFormulario) => {
   console.log('Datos recibidos desde el renderer:', formData);
   console.log("-")
-  if(!validateFolderPath(formData.ubicacionCarpeta)){
+  if (!validateFolderPath(formData.ubicacionCarpeta)) {
     event.sender.send('form-submission-error', { message: 'Proporcione una ruta válida para guardar los capítulos.' });
-  }else{
+  } else {
     event.sender.send('form-submission-success', { message: 'Form submitted successfully' });
   }
-  
-  // await descargarImagenes()
+
+  await descargarImagenes(formData)
+  event.sender.send('download-success',{message: 'Download finished.'})
   // Aquí puedes manejar los datos, realizar operaciones de negocio, etc.
   // Supongamos que la operación es exitosa:
 
@@ -93,15 +95,16 @@ ipcMain.on('submit-form', async (event, formData: datosFormulario) => {
   // event.sender.send('form-submission-error', { message: 'Error submitting form' });
 });
 
-async function descargarImagenes() {
+async function descargarImagenes(datosFormulario: datosFormulario) {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
-  const urlInicial = "https://inmanga.com/ver/manga/Jojos-Bizarre-Adventure-Parte-7-Steel-Ball-Run/01/2c7361f8-bb98-4116-966a-657d7f8133cd";
+  const urlInicial = datosFormulario.urlBase;
+  selectedManga = urlInicial.split("/")[5]
   await page.goto(urlInicial, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#ChapList');
   console.log()
-  const chapters = await page.evaluate(() => {
+  var chapters = await page.evaluate(() => {
     const chapList = document.getElementById('ChapList');
     if (!chapList) return [];
 
@@ -118,8 +121,38 @@ async function descargarImagenes() {
   console.log("total capítulos: ", chapters.length)
 
   if (chapters.length > 0) {
+    if (datosFormulario.seleccionCapitulos !== "") {
+      let chaptersRange: string[] = [];
+      let [firstChapter, lastChapter] = datosFormulario.seleccionCapitulos.split("-").map(chapter => chapter.padStart(2, '0'));
+      if (datosFormulario.seleccionCapitulos.includes("-")) {
+        for (let i = parseInt(firstChapter); i < parseInt(lastChapter); i++) {
+          if (i.toString().length === 1) {
+            chaptersRange.push("0" + i.toString())
+          } else {
+            chaptersRange.push(i.toString())
+          }
+        }
+      } else if (datosFormulario.seleccionCapitulos.includes(",")) {
+        console.log(datosFormulario.seleccionCapitulos.split(","))
+        chaptersRange = datosFormulario.seleccionCapitulos
+        .split(",")
+        .map(chapter => chapter.trim())  // Elimina espacios en blanco adicionales
+        .filter(chapter => chapter !== "")  // Filtra elementos vacíos
+        .filter((chapter, index, self) => self.indexOf(chapter) === index)  // Elimina duplicados
+        .sort((a, b) => parseInt(a) - parseInt(b));  
+        
+      }
+      chaptersRange.push(lastChapter)
+      console.log(chaptersRange)
+      if(chaptersRange.length > 0){
+        chaptersRange = chaptersRange.filter(chapter => chapter !== undefined);
+        chapters = chapters.filter(chap => chaptersRange.includes(chap.text))
+      }
+      console.log(chapters)
+      // chapters.filter(chap => chap.text )
+    }
     for (const cap of chapters) {
-      let nuevoCapUrl: string = `https://inmanga.com/ver/manga/Jojos-Bizarre-Adventure-Parte-7-Steel-Ball-Run/${cap.text}/${cap.value}`
+      let nuevoCapUrl: string = `https://inmanga.com/ver/manga/${selectedManga}/${cap.text}/${cap.value}`
 
       await page.goto(nuevoCapUrl, { waitUntil: 'domcontentloaded' });
 
@@ -148,8 +181,7 @@ async function descargarImagenes() {
       })
 
       if (pages.length > 0) {
-        const rutaUsuario = 'E:/pruebaDescargasPuppeteer';
-        const chapterFolderPath = join(rutaUsuario, `jojos-parte7-${cap.text}`);
+        const chapterFolderPath = join(datosFormulario.ubicacionCarpeta, `${selectedManga}-${cap.text}`);
         fs.mkdirSync(chapterFolderPath, { recursive: true });
         for (const page of pages) {
           let urlImagen = `${urlBase}/${nuevoCapUrl.split("/")[5]}/chapter/${cap.text}/page/${page.numPagina}/${page.paginaId}`
@@ -170,7 +202,7 @@ async function descargarImagenes() {
             console.log(`Imagen guardada en ${savePath}`);
 
             // Añadir un retraso de 1 a 2 segundos entre descargas de imágenes
-            const downloadDelay = Math.floor(Math.random() * 1000) + 1000; // Entre 1000ms y 2000ms
+            const downloadDelay = 500; // Entre 1000ms y 2000ms
             await new Promise(r => setTimeout(r, downloadDelay)); // Usar setTimeout para retraso
           } catch (error) {
             console.error(`Error al procesar la imagen: ${error}`);
@@ -192,12 +224,12 @@ async function downloadImage(url) {
 }
 
 
-function validateFolderPath(folderPath)  {
+function validateFolderPath(folderPath) {
   const absolutePath = resolve(folderPath);
 
-  if(fs.existsSync(absolutePath)){
+  if (fs.existsSync(absolutePath)) {
     return true;
-  }else { 
+  } else {
     return false;
   }
 }

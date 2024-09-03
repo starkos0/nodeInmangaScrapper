@@ -28,7 +28,6 @@ module.exports = {
           "base-300": "#080807",
           "base-content": "#E1D5CD",
           "info": "#2094f3",
-          "success": "#009485",
           "warning": "#ff9900",
           "fontFamily": {
             'body': ['Poppins', 'sans-serif'],
