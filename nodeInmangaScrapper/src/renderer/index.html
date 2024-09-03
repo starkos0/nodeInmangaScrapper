@@ -69,13 +69,9 @@
         <div class="modal-box">
           <h3 class="text-lg font-bold">Nota importante</h3>
           <p class="py-4">Para que la generación del PDF funcione correctamente ten en cuenta lo siguiente:</p>
-          <p>Debes de seleccionar la ruta de la carpeta general (la que habías ingresado anteriormente para crear la
-            descarga) y asegurarte de que estén los capítulos completos, te recomiendo no cambiar los nombres de las
-            imagenes, para que el PDF esté correctamente estructurado.</p>
-          <input type="text" placeholder="Escribe aquí la ruta de la carpeta..."
-            class="input border border-base-content rounded-md input-sm w-full max-w-xs" id="rutaPdfs"
-            name="rutaPdfs" />
-
+          <p>Todos los capítulos serán guardados en una nueva carpeta dentro de la ruta que has proporcionado previamente. No modifiques el contenido de las carpetas de los capítulos para que el proceso funcione correctamente.</p>
+          <button class="btn" id="generaPdf">Generar</button>
+        
           <div class="modal-action">
             <form method="dialog">
               <!-- if there is a button in form, it will close the modal -->
@@ -114,8 +110,8 @@
       </div>
     </div>
   </dialog>
-  <div id="loader" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-base-200 p-4 rounded-md flex justify-center items-center gap-4 hidden">
-    <span>Descargando capítulos...</span>
+  <div id="loader" class="absolute z-40 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-base-200 p-4 rounded-md flex justify-center items-center gap-4 hidden">
+    <span>Cargando proceso, un momento porfavor...</span>
     <span class="loading loading-spinner loading-md"></span>
   </div>
   <script type="module" src="./src/renderer.ts"></script>

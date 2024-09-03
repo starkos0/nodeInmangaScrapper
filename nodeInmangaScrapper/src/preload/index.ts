@@ -19,7 +19,11 @@ if (process.contextIsolated) {
       onFormError: (callback: (error: string) => void) =>
         ipcRenderer.on('form-submission-error', (event, error) => callback(error)),
       onDownloadSuccess: (callback: (response: any) => void) =>
-        ipcRenderer.on('download-success',(event,response) => callback(response))
+        ipcRenderer.on('download-success',(event,response) => callback(response)),
+      generatePdfs: (ubicacionCarpeta: string) => 
+        ipcRenderer.send('generate-pdfs', ubicacionCarpeta),
+      onGeneratedPdfs: (callback: (responsae: any) => void) =>
+        ipcRenderer.on('generated-pdfs', (event,response) => callback(response))
     })
   } catch (error) {
     console.error(error)

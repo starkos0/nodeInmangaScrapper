@@ -1,4 +1,10 @@
 import { datosFormulario } from '../../interfaces/datosFormulario'
+var datos: datosFormulario = {
+  urlBase: '',
+  ubicacionCarpeta: '',
+  descargarTodos: false,
+  seleccionCapitulos: ''
+};
 
 function init(): void {
   window.addEventListener('DOMContentLoaded', () => {
@@ -14,6 +20,18 @@ function init(): void {
     });
     infoDialogButton.addEventListener('click', () =>{
       infoDialog.showModal();
+    })
+    const btnGeneratePDFs = document.getElementById("generaPdf") as HTMLButtonElement;
+    btnGeneratePDFs.addEventListener("click", () =>{
+      let ubicacionCarpeta = document.getElementById("ubicacionCarpeta") as HTMLInputElement;
+
+      if(ubicacionCarpeta.value !== ""){
+        myModal.close()
+
+        const loader = document.getElementById("loader") as HTMLDivElement;
+        loader.classList.toggle("hidden")
+        window.controlesForm.generatePdfs(ubicacionCarpeta.value);
+      }
     })
   })
 }
@@ -89,7 +107,7 @@ function validarForm(event: Event) {
 
   // Si todas las validaciones pasan, enviar datos
   if (esValido) {
-    let datos: datosFormulario = {
+    datos = {
       urlBase: urlBase.value,
       ubicacionCarpeta: ubicacionCarpeta.value,
       descargarTodos: descargarTodos.checked,
@@ -112,6 +130,12 @@ window.controlesForm.onFormError((error) => {
   console.error('Form submission error:', error);
   mostrarAlerta("La ubicación introducida no es válida/no existe.")
 });
+
+window.controlesForm.onGeneratedPdfs((response) =>{
+  const loader = document.getElementById("loader") as HTMLDivElement;
+  loader.classList.toggle("hidden")
+  mostrarAlertaSuccess("Generación de PDFs terminada.")
+})
 
 window.controlesForm.onDownloadSuccess((response) =>{
   const loader = document.getElementById("loader") as HTMLDivElement;
