@@ -67,7 +67,10 @@ function validarForm(event: Event) {
   if (seleccionCapitulos.value === "" && !descargarTodos.checked) {
     esValido = false;
     mostrarAlerta("Debes hacer una selección de capítulos o marcar el check para descargar todos.");
-  } else if (seleccionCapitulos.value !== "") {
+  }else if(seleccionCapitulos.value !== "" && descargarTodos.checked){
+    esValido = false;
+    mostrarAlerta("No puedes seleccionar el check y poner un rango a la vez.")
+  }else if (seleccionCapitulos.value !== "") {
     const validRegex = /^(\d{2})(,\d{2})*$/;
     const validRegex2 = /^(\d{2})-(\d{2})$/;
 
@@ -93,8 +96,9 @@ function validarForm(event: Event) {
       seleccionCapitulos: seleccionCapitulos.value
     };
 
+    const loader = document.getElementById("loader") as HTMLDivElement;
+    loader.classList.toggle("hidden")
     window.controlesForm.submitForm(datos);
-
     // Manejar respuesta de éxito
   }
 }
@@ -109,13 +113,45 @@ window.controlesForm.onFormError((error) => {
   mostrarAlerta("La ubicación introducida no es válida/no existe.")
 });
 
+window.controlesForm.onDownloadSuccess((response) =>{
+  const loader = document.getElementById("loader") as HTMLDivElement;
+  loader.classList.toggle("hidden")
+  mostrarAlertaSuccess("Descarga terminada.")
+})
 
 init()
 
 function mostrarAlerta(message: string): void {
   const alertDiv = document.createElement("div");
   alertDiv.setAttribute("role", "alert");
-  alertDiv.className = "alert alert-error my-4";
+  alertDiv.className = "alert alert-error my-4 rounded-md";
+  alertDiv.innerHTML = `
+       <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg> 
+    <span>${message}</span>
+  `;
+  const errorHandling = document.getElementById("errorHandling") as HTMLDivElement;
+  errorHandling.insertBefore(alertDiv, errorHandling.firstChild);
+  setTimeout(() => {
+    alertDiv.classList.add("fade-out");
+    setTimeout(() => {
+      alertDiv.remove();
+    }, 500); // Tiempo para que se complete la animación de fade-out
+  }, 2500);
+}
+function mostrarAlertaSuccess(message: string): void {
+  const alertDiv = document.createElement("div");
+  alertDiv.setAttribute("role", "alert");
+  alertDiv.className = "alert alert-success my-4 rounded-md";
   alertDiv.innerHTML = `
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +162,7 @@ function mostrarAlerta(message: string): void {
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
-          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     <span>${message}</span>
   `;

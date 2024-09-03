@@ -8,6 +8,7 @@ declare global {
       submitForm: (formData: datosFormulario) => void;
       onFormSuccess: (callback: (response: any) => void) => void;
       onFormError: (callback: (error: string) => void) => void;
+      onDownloadSuccess: (callback: (error: string) => void) => voidl;
     };
   }
 }
