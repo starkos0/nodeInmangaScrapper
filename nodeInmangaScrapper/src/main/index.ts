@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join, resolve } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -23,7 +23,7 @@ function createWindow(): void {
       sandbox: false
     }
   })
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -40,6 +40,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  checkForUpdates()
 }
 
 // This method will be called when Electron has finished
@@ -251,8 +252,8 @@ async function createPDFsFromImages(basePath) {
   }
   const chapters = fs.readdirSync(basePath)
     .filter(file => {
-        const fullPath = join(basePath, file);
-        return fs.statSync(fullPath).isDirectory() && file !== "capitulosFormatoPdf";
+      const fullPath = join(basePath, file);
+      return fs.statSync(fullPath).isDirectory() && file !== "capitulosFormatoPdf";
     });
   console.log(chapters)
   for (const chapter of chapters) {
@@ -286,7 +287,55 @@ async function createPDFsFromImages(basePath) {
     console.log(`PDF generado para ${chapter}: ${pdfFolder}`);
   }
   console.log("proceso terminado")
-  
+
+}
+
+async function checkForUpdates() {
+  console.log("--")
+  try {
+    let newVersionFound: boolean = false;
+    const response = await axios.get("https://api.github.com/repos/starkos0/nodeInmangaScrapper/releases/latest");
+    const latestVersion = response.data.tag_name;
+    const currentVersion = app.getVersion();
+    console.log("latestverison: ", latestVersion)
+    console.log("currentVersion: ", currentVersion)
+    const latestParts = latestVersion.split('.').map(Number);
+    const currentParts = currentVersion.split('.').map(Number);
+    const length = Math.max(latestParts.length, currentParts.length);
+
+    for (let i = 0; i < length; i++) {
+      const latestPart = latestParts[i] || 0; // Usa 0 si la parte no está definida
+      const currentPart = currentParts[i] || 0; // Usa 0 si la parte no está definida
+      console.log(`Comparing: latestPart: ${latestPart}, currentPart: ${currentPart}`);
+
+      if (latestPart > currentPart) {
+          newVersionFound = true;
+          break; // Nueva versión encontrada, no es necesario continuar
+      } else if (latestPart < currentPart) {
+          newVersionFound = false;
+          break; // La versión actual es mayor, no es necesario continuar
+      }
+      // Si son iguales, el bucle continúa comparando la siguiente parte
+  }
+    if (newVersionFound) {
+      notifyNewVersion(latestVersion);
+    }
+  } catch (error) {
+    console.log("No se ha podido comprobar la versión más reciente.")
+  }
+}
+
+function notifyNewVersion(latestVersion) {
+  dialog.showMessageBox({
+    type: 'info',
+    buttons: ['Descargar', 'Cancelar'],
+    title: 'Nueva versión disponible',
+    message: `Hay una nueva versión disponible (${latestVersion}). ¿Quieres descargarla ahora?`,
+  }).then(result => {
+    if (result.response === 0) {
+      require('electron').shell.openExternal('https://github.com/starkos0/nodeInmangaScrapper/releases/latest');
+    }
+  });
 }
 
 /**
