@@ -132,12 +132,14 @@ window.controlesForm.onFormError((error) => {
 });
 
 window.controlesForm.onGeneratedPdfs((response) =>{
+  console.log(response)
   const loader = document.getElementById("loader") as HTMLDivElement;
   loader.classList.toggle("hidden")
   mostrarAlertaSuccess("Generación de PDFs terminada.")
 })
 
 window.controlesForm.onDownloadSuccess((response) =>{
+  console.log(response)
   const loader = document.getElementById("loader") as HTMLDivElement;
   loader.classList.toggle("hidden")
   mostrarAlertaSuccess("Descarga terminada.")
