@@ -1,9 +1,9 @@
 {
   "name": "nodeinmangascrapper",
   "version": "1.0.0",
-  "description": "A minimal Electron application with TypeScript",
+  "description": "Descarga mangas en formato PDF actualmente de inManga",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "Starkos",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
@@ -15,10 +15,11 @@
     "dev": "electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
-    "build:unpack": "npm run build && electron-builder --dir",
+    "build:unpack": "npm run build && electron-builder && npm run rename-unpacked-version --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",
-    "build:linux": "npm run build && electron-builder --linux"
+    "build:linux": "npm run build && electron-builder --linux",
+    "rename-unpacked-version" : "mv dist/win-unpacked dist/nodeinmangascrapper"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
