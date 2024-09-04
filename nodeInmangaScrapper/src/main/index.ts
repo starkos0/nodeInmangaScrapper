@@ -7,7 +7,7 @@ import axios from 'axios';
 import fs from 'fs';
 import sharp from 'sharp';
 import { datosFormulario } from '../interfaces/datosFormulario';
-
+import { PDFDocument } from 'pdf-lib'
 var urlBase = 'https://pack-yak.intomanga.com/images/manga';
 var selectedManga = "";
 function createWindow(): void {
@@ -77,6 +77,12 @@ app.on('window-all-closed', () => {
   }
 })
 
+ipcMain.on('generate-pdfs', async (event, ubicacionCarpeta: string) => {
+  console.log("-")
+  await createPDFsFromImages(ubicacionCarpeta);
+  event.sender.send('generated-pdfs', { message: 'Prodeso de generación de pdfs terminado.' });
+})
+
 ipcMain.on('submit-form', async (event, formData: datosFormulario) => {
   console.log('Datos recibidos desde el renderer:', formData);
   console.log("-")
@@ -87,7 +93,7 @@ ipcMain.on('submit-form', async (event, formData: datosFormulario) => {
   }
 
   await descargarImagenes(formData)
-  event.sender.send('download-success',{message: 'Download finished.'})
+  event.sender.send('download-success', { message: 'Download finished.' })
   // Aquí puedes manejar los datos, realizar operaciones de negocio, etc.
   // Supongamos que la operación es exitosa:
 
@@ -135,16 +141,16 @@ async function descargarImagenes(datosFormulario: datosFormulario) {
       } else if (datosFormulario.seleccionCapitulos.includes(",")) {
         console.log(datosFormulario.seleccionCapitulos.split(","))
         chaptersRange = datosFormulario.seleccionCapitulos
-        .split(",")
-        .map(chapter => chapter.trim())  // Elimina espacios en blanco adicionales
-        .filter(chapter => chapter !== "")  // Filtra elementos vacíos
-        .filter((chapter, index, self) => self.indexOf(chapter) === index)  // Elimina duplicados
-        .sort((a, b) => parseInt(a) - parseInt(b));  
-        
+          .split(",")
+          .map(chapter => chapter.trim())  // Elimina espacios en blanco adicionales
+          .filter(chapter => chapter !== "")  // Filtra elementos vacíos
+          .filter((chapter, index, self) => self.indexOf(chapter) === index)  // Elimina duplicados
+          .sort((a, b) => parseInt(a) - parseInt(b));
+
       }
       chaptersRange.push(lastChapter)
       console.log(chaptersRange)
-      if(chaptersRange.length > 0){
+      if (chaptersRange.length > 0) {
         chaptersRange = chaptersRange.filter(chapter => chapter !== undefined);
         chapters = chapters.filter(chap => chaptersRange.includes(chap.text))
       }
@@ -233,6 +239,56 @@ function validateFolderPath(folderPath) {
     return false;
   }
 }
+
+async function createPDFsFromImages(basePath) {
+  const pdfFolder = join(basePath, "capitulosFormatoPdf")
+  if (!fs.existsSync(pdfFolder)) {
+    // Crea la nueva carpeta
+    fs.mkdirSync(pdfFolder, { recursive: true });
+    console.log(`Carpeta creada en: ${pdfFolder}`);
+  } else {
+    console.log(`La carpeta ya existe: ${pdfFolder}`);
+  }
+  const chapters = fs.readdirSync(basePath)
+    .filter(file => {
+        const fullPath = join(basePath, file);
+        return fs.statSync(fullPath).isDirectory() && file !== "capitulosFormatoPdf";
+    });
+  console.log(chapters)
+  for (const chapter of chapters) {
+    const chapterPath = join(basePath, chapter);
+    console.log(chapterPath)
+    const images = fs.readdirSync(chapterPath).filter(file => file.endsWith('.png')).sort((a, b) => a.localeCompare(b));
+    console.log(images)
+    const pdfDoc = await PDFDocument.create();
+
+    for (const imageName of images) {
+      const imagePath = join(chapterPath, imageName);
+      const imageBytes = fs.readFileSync(imagePath); // Leer la imagen como buffer
+      console.log("--")
+      const image = await pdfDoc.embedPng(imageBytes); // Insertar imagen en el PDF
+      const { width, height } = image.scale(1); // Usar tamaño original de la imagen
+
+      // Crear una página del tamaño de la imagen
+      const page = pdfDoc.addPage([width, height]);
+      page.drawImage(image, {
+        x: 0,
+        y: 0,
+        width,
+        height,
+      });
+      console.log("--")
+    }
+
+    // Guardar el PDF en la carpeta del capítulo
+    const pdfBytes = await pdfDoc.save();
+    fs.writeFileSync(pdfFolder + "/" + chapter + ".pdf", pdfBytes);
+    console.log(`PDF generado para ${chapter}: ${pdfFolder}`);
+  }
+  console.log("proceso terminado")
+  
+}
+
 /**
  * 
  * 

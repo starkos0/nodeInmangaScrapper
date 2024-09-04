@@ -15,11 +15,15 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('controlesForm', {
       submitForm: (formData: datosFormulario) => ipcRenderer.send('submit-form', formData),
       onFormSuccess: (callback: (response: any) => void) =>
-        ipcRenderer.on('form-submission-success', (event, response) => callback(response)),
-      onFormError: (callback: (error: string) => void) =>
-        ipcRenderer.on('form-submission-error', (event, error) => callback(error)),
+        ipcRenderer.on('form-submission-success', (response) => callback(response)),
+      onFormError: (callback: (error: any) => void) =>
+        ipcRenderer.on('form-submission-error', (response) => callback(response)),
       onDownloadSuccess: (callback: (response: any) => void) =>
-        ipcRenderer.on('download-success',(event,response) => callback(response))
+        ipcRenderer.on('download-success',(response) => callback(response)),
+      generatePdfs: (ubicacionCarpeta: string) => 
+        ipcRenderer.send('generate-pdfs', ubicacionCarpeta),
+      onGeneratedPdfs: (callback: (responsae: any) => void) =>
+        ipcRenderer.on('generated-pdfs', (response) => callback(response))
     })
   } catch (error) {
     console.error(error)
